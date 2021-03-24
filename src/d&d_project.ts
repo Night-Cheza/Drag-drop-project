@@ -1,4 +1,4 @@
-
+/* my tryout. Can't see title in html file.
 interface ProjectTemplate {
     title: string;    
     description?: string;
@@ -92,7 +92,7 @@ projectInput.addEventListener("ADD PROJECT", event => {
 
 });
 
-/*class SingleProject implements ProjectTemplate {
+class SingleProject implements ProjectTemplate {
     title: string;
 
     constructor (ttl: string) {
@@ -108,8 +108,23 @@ class ProjectList implements ProjectTemplate {
     }
 } */
 
+class NewProject {
+    templateEl: HTMLTemplateElement;
+    hostEl: HTMLDivElement;
+    element: HTMLFormElement;
 
+  constructor () {
+      this.templateEl = document.getElementById("project-input")! as HTMLTemplateElement;
+      this.hostEl = document.getElementById("app")! as HTMLDivElement;
 
+      const inportedHTMLElement = document.importNode(this.templateEl.content, true);
+      this.element = inportedHTMLElement.firstElementChild as HTMLFormElement;
+      this.attach ();
+  }  
 
+  private attach (){
+      this.hostEl.insertAdjacentElement ("afterbegin", this.element);
+  };
+}
 
-
+const ProjectInput = new NewProject ();

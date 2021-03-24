@@ -1,21 +1,38 @@
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-const registeredValidator = {};
-function Required(target, propName) {
-    registeredValidator[target.constructor.name] = Object.assign(Object.assign({}, registeredValidator[target.constructor.name]), { [propName]: [...registeredValidator[target.constructor.name][propName], "required"] });
+/* my tryout. Can't see title in html file.
+interface ProjectTemplate {
+    title: string;
+    description?: string;
+    people?: number;
 }
-function PositiveNumber(target, propName) {
-    registeredValidator[target.constructor.name] = Object.assign(Object.assign({}, registeredValidator[target.constructor.name]), { [propName]: [...registeredValidator[target.constructor.name][propName], "positive"] });
+
+interface ValidatorConfig {
+    [property: string]: {
+        [validProp: string]: string []
+    };
 }
-function validate(obj) {
-    const objValidatorConfig = registeredValidator[obj.constructor.name];
-    if (!objValidatorConfig) {
-        return true;
+
+const registeredValidator: ValidatorConfig = {};
+
+
+function Required (target:any, propName: string) {
+    registeredValidator[target.constructor.name] = {
+        ...registeredValidator[target.constructor.name],
+        [propName]: [...registeredValidator[target.constructor.name] [propName], "required"]
+    };
+}
+
+function PositiveNumber (target: any, propName: string) {
+    registeredValidator[target.constructor.name] = {
+        ...registeredValidator[target.constructor.name],
+        [propName]: [...registeredValidator[target.constructor.name] [propName], "positive"]
+    };
+}
+
+function validate (obj:any) {
+    const objValidatorConfig = registeredValidator [obj.constructor.name];
+    if(!objValidatorConfig) {
+        return true
     }
     let isValid = true;
     for (const prop in objValidatorConfig) {
@@ -25,49 +42,58 @@ function validate(obj) {
                     isValid = isValid && !!obj[prop];
                     break;
                 case "positive":
-                    isValid = isValid && +obj[prop] > 0;
+                    isValid = isValid && + obj[prop] > 0;
             }
         }
     }
     return isValid;
 }
-class NewProject {
-    constructor(ttl, descr, ppl) {
+
+
+class NewProject implements ProjectTemplate {
+
+    @Required
+    title: string;
+    @Required
+    description: string;
+    @PositiveNumber
+    people: number
+
+    constructor (ttl: string, descr: string, ppl: number) {
         this.title = ttl;
         this.description = descr;
         this.people = ppl;
     }
 }
-__decorate([
-    Required
-], NewProject.prototype, "title", void 0);
-__decorate([
-    Required
-], NewProject.prototype, "description", void 0);
-__decorate([
-    PositiveNumber
-], NewProject.prototype, "people", void 0);
-const projectInput = document.getElementById("project-input");
+
+const projectInput = document.getElementById("project-input") as HTMLFormElement;
 projectInput.addEventListener("ADD PROJECT", event => {
-    const titleEl = document.getElementById("title");
-    const descriptionEl = document.getElementById("description");
-    const peopleEl = document.getElementById("people");
+
+    const titleEl = <HTMLInputElement> document.getElementById ("title");
+    const descriptionEl = document.getElementById("description") as HTMLInputElement;
+    const peopleEl = document.getElementById("people") as HTMLInputElement;
+
     const title = titleEl.value;
     const description = descriptionEl.value;
     const people = +peopleEl.value;
     if (people < 10) {
-        return +people;
+        return +people
+    } else {
+        alert ("Invalidinput. Please try again")
     }
-    else {
-        alert("Invalidinput. Please try again");
+    
+
+    const createdProject = new NewProject (title, description, people);
+
+    if(!validate (createdProject)) {
+        alert ("Invalid input. Please try again");
     }
-    const createdProject = new NewProject(title, description, people);
-    if (!validate(createdProject)) {
-        alert("Invalid input. Please try again");
-    }
+
     console.log(createdProject);
+
 });
-/*class SingleProject implements ProjectTemplate {
+
+class SingleProject implements ProjectTemplate {
     title: string;
 
     constructor (ttl: string) {
@@ -82,3 +108,17 @@ class ProjectList implements ProjectTemplate {
         this.title = ttl;
     }
 } */
+class NewProject {
+    constructor() {
+        this.templateEl = document.getElementById("project-input");
+        this.hostEl = document.getElementById("app");
+        const inportedHTMLElement = document.importNode(this.templateEl.content, true);
+        this.element = inportedHTMLElement.firstElementChild;
+        this.attach();
+    }
+    attach() {
+        this.hostEl.insertAdjacentElement("afterbegin", this.element);
+    }
+    ;
+}
+const ProjectInput = new NewProject();
