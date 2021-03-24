@@ -1,46 +1,9 @@
-/*interface Template {
-    name: string;
-}
-interface Form {
-   title: string;
-   input: string | number;
-}
-
-class ProjectTemplate implements Form {
-    title: string;
-    input: string | number;
-    textarea: string;
-    
-    constructor (t: string, i: string | number, ta: string) {
-        this.title = t;
-        this.input = i;
-        this.textarea = ta;
-    }
-
-}
-
-const projectForm = document.querySelector("form-control")!;
-projectForm.addEventListener("submit", event => {
-    event.preventDefault();
-    const titleEl = document.getElementsByName("label");
-    const inputEl = document.querySelector("input") as HTMLInputElement;
-    const textareaEl = document.getElementsByName("textarea");
-
-    const title = titleEl.values;
-    const textarea = textareaEl.values;
-    const input = inputEl.value;
-})*/
-
 
 interface ProjectTemplate {
     title: string;    
     description?: string;
     people?: number;
 }
-
-/*let ttl = "butterfly classification"
-
-console.log(ttl);*/
 
 interface ValidatorConfig {
     [property: string]: {
@@ -112,6 +75,12 @@ projectInput.addEventListener("ADD PROJECT", event => {
     const title = titleEl.value;
     const description = descriptionEl.value;
     const people = +peopleEl.value;
+    if (people < 10) {
+        return +people
+    } else {
+        alert ("Invalidinput. Please try again")
+    }
+    
 
     const createdProject = new NewProject (title, description, people);
 
@@ -123,20 +92,7 @@ projectInput.addEventListener("ADD PROJECT", event => {
 
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-class SingleProject implements ProjectTemplate {
+/*class SingleProject implements ProjectTemplate {
     title: string;
 
     constructor (ttl: string) {
@@ -150,50 +106,10 @@ class ProjectList implements ProjectTemplate {
     constructor (ttl: string) {
         this.title = ttl;
     }
-}
+} */
 
 
 
 
-
-
-/*projectForm.addEventListener("submit", event => {
-    event.preventDefault();
-    const titleEl = document.getElementById("title") as HTMLInputElement;
-    const descriptionEl = document.getElementById("description") as HTMLInputElement;
-    const peopleEl = document.getElementById("people") as HTMLInputElement;
-
-    const title = titleEl.value;
-    const description = descriptionEl.value;
-    const people = +peopleEl.value;
-
-    const CreatedProject = new NewProject (title, description, people);
-
-    console.log(CreatedProject);
-
-
-
-    const projectForm: HTMLFormElement = document.querySelector("form")!;
-
-projectForm.addEventListener("ADD PROJECT", event =>{
-    const titleEl = document.getElementById("title") as HTMLInputElement;
-    const descriptionEl = document.getElementById("description") as HTMLInputElement;
-    const peopleEl = document.getElementById("people") as HTMLInputElement;
-
-    const title = titleEl.value;
-    const description = descriptionEl.value;
-    const people = +peopleEl.value;
-
-    const CreatedProject = new NewProject (title, description, people);
-
-    if(!validate(CreatedProject)) {
-        alert ("Invalid input. Please try again");
-        return;
-    }
-
-    console.log(CreatedProject);
-})
-
-})*/
 
 
