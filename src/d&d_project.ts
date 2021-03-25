@@ -66,7 +66,7 @@ class NewProject implements ProjectTemplate {
 }
 
 const projectInput = document.getElementById("project-input") as HTMLFormElement;
-projectInput.addEventListener("ADD PROJECT", event => {
+projectInput.addEventListener("submit", event => {
 
     const titleEl = <HTMLInputElement> document.getElementById ("title");
     const descriptionEl = document.getElementById("description") as HTMLInputElement;
@@ -112,19 +112,37 @@ class NewProject {
     templateEl: HTMLTemplateElement;
     hostEl: HTMLDivElement;
     element: HTMLFormElement;
+    titleInputEl: HTMLInputElement;
+    descrInputEl: HTMLInputElement;
+    pplInputEl: HTMLInputElement;
 
-  constructor () {
+    constructor () {
       this.templateEl = document.getElementById("project-input")! as HTMLTemplateElement;
       this.hostEl = document.getElementById("app")! as HTMLDivElement;
 
-      const inportedHTMLElement = document.importNode(this.templateEl.content, true);
-      this.element = inportedHTMLElement.firstElementChild as HTMLFormElement;
-      this.attach ();
-  }  
+      const importedHTMLElement = document.importNode(this.templateEl.content, true);
+      this.element = importedHTMLElement.firstElementChild as HTMLFormElement;
+      this.element.id = "user-input"; //id is taken from css file
 
-  private attach (){
+      this.titleInputEl = this.element.querySelector("#title")!;
+      this.descrInputEl = this.element.querySelector("#description")!;
+      this.pplInputEl = this.element.querySelector("#people")!;
+
+      this.configure;
+      this.attach ();
+    }  
+
+    private submitHandler(event: Event) {
+
+    }
+
+    private configure () {
+        this.element.addEventListener("submit", this.submitHandler)
+    }
+
+    private attach (){
       this.hostEl.insertAdjacentElement ("afterbegin", this.element);
-  };
+    };
 }
 
 const ProjectInput = new NewProject ();

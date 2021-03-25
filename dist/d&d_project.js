@@ -67,7 +67,7 @@ class NewProject implements ProjectTemplate {
 }
 
 const projectInput = document.getElementById("project-input") as HTMLFormElement;
-projectInput.addEventListener("ADD PROJECT", event => {
+projectInput.addEventListener("submit", event => {
 
     const titleEl = <HTMLInputElement> document.getElementById ("title");
     const descriptionEl = document.getElementById("description") as HTMLInputElement;
@@ -112,8 +112,9 @@ class NewProject {
     constructor() {
         this.templateEl = document.getElementById("project-input");
         this.hostEl = document.getElementById("app");
-        const inportedHTMLElement = document.importNode(this.templateEl.content, true);
-        this.element = inportedHTMLElement.firstElementChild;
+        const importedHTMLElement = document.importNode(this.templateEl.content, true);
+        this.element = importedHTMLElement.firstElementChild;
+        this.element.id = "user-input"; //id is taken from css file
         this.attach();
     }
     attach() {
