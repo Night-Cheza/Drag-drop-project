@@ -15,11 +15,31 @@ function autobind (target: any, methodName: string, descriptor: PropertyDescript
 //Input validation
 interface Validatable {
     value: string | number;
-    required: boolean;
-    minLength: number;
-    maxLength: number;
-    minNum: number;
-    maxNum: number;
+    required?: boolean;
+    minLength?: number;
+    maxLength?: number;
+    minNum?: number;
+    maxNum?: number;
+}
+
+function validate(validInput: Validatable) {
+    let isValid = true;
+    if(validInput.required) {
+        isValid = isValid && validInput.value.toString().trim().length !== 0;
+    }
+    if(validInput.minLength != null && typeof validInput.value === "string") {
+        isValid = isValid && validInput.value.length >= validInput.minLength;
+    }
+    if(validInput.maxLength != null && typeof validInput.value === "string") {
+        isValid = isValid && validInput.value.length <= validInput.maxLength;
+    }
+    if (validInput.minNum != null && typeof validInput.value === "number") {
+        isValid = isValid && validInput.value >= validInput.minNum;
+    }
+    if (validInput.maxNum != null && typeof validInput.value === "number") {
+        isValid = isValid && validInput.value <= validInput.maxNum;
+    }
+    return isValid;
 }
 
 //Project input class
@@ -52,10 +72,26 @@ class NewProject {
         const createdDescr = this.descrInputEl.value;
         const numberOfPpl = this.pplInputEl.value;
 
+        const titleValid: Validatable = {
+            value: createdTitle,
+            required: true,
+        };
+        const descrValid: Validatable = {
+            value: createdDescr,
+            required: true,
+            minLength: 2,
+        };
+        const pplValid: Validatable = {
+            value: +numberOfPpl,
+            required: true,
+            minNum: 0,
+            maxNum: 10,
+        };
+
         if (
-            createdTitle.trim().length === 0 ||
-            createdDescr.trim().length === 0 ||
-            numberOfPpl.trim().length === 0
+            !validate(titleValid) ||
+            !validate(descrValid) ||
+            !validate(pplValid)
         ) {
             alert ("Invalid input. Please try again");
             return;
