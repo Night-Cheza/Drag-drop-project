@@ -1,113 +1,23 @@
 "use strict";
-/* my tryout. Can't see title in html file.
-interface ProjectTemplate {
-    title: string;
-    description?: string;
-    people?: number;
-}
-
-interface ValidatorConfig {
-    [property: string]: {
-        [validProp: string]: string []
-    };
-}
-
-const registeredValidator: ValidatorConfig = {};
-
-
-function Required (target:any, propName: string) {
-    registeredValidator[target.constructor.name] = {
-        ...registeredValidator[target.constructor.name],
-        [propName]: [...registeredValidator[target.constructor.name] [propName], "required"]
-    };
-}
-
-function PositiveNumber (target: any, propName: string) {
-    registeredValidator[target.constructor.name] = {
-        ...registeredValidator[target.constructor.name],
-        [propName]: [...registeredValidator[target.constructor.name] [propName], "positive"]
-    };
-}
-
-function validate (obj:any) {
-    const objValidatorConfig = registeredValidator [obj.constructor.name];
-    if(!objValidatorConfig) {
-        return true
-    }
-    let isValid = true;
-    for (const prop in objValidatorConfig) {
-        for (const validator of objValidatorConfig[prop]) {
-            switch (validator) {
-                case "required":
-                    isValid = isValid && !!obj[prop];
-                    break;
-                case "positive":
-                    isValid = isValid && + obj[prop] > 0;
-            }
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+//autobind decorator
+function autobind(target, methodName, descriptor) {
+    const originalMethod = descriptor.value;
+    const newDescriptor = {
+        configurable: true,
+        get() {
+            const boundFn = originalMethod.bind(this);
+            return boundFn;
         }
-    }
-    return isValid;
+    };
+    return newDescriptor;
 }
-
-
-class NewProject implements ProjectTemplate {
-
-    @Required
-    title: string;
-    @Required
-    description: string;
-    @PositiveNumber
-    people: number
-
-    constructor (ttl: string, descr: string, ppl: number) {
-        this.title = ttl;
-        this.description = descr;
-        this.people = ppl;
-    }
-}
-
-const projectInput = document.getElementById("project-input") as HTMLFormElement;
-projectInput.addEventListener("submit", event => {
-
-    const titleEl = <HTMLInputElement> document.getElementById ("title");
-    const descriptionEl = document.getElementById("description") as HTMLInputElement;
-    const peopleEl = document.getElementById("people") as HTMLInputElement;
-
-    const title = titleEl.value;
-    const description = descriptionEl.value;
-    const people = +peopleEl.value;
-    if (people < 10) {
-        return +people
-    } else {
-        alert ("Invalidinput. Please try again")
-    }
-    
-
-    const createdProject = new NewProject (title, description, people);
-
-    if(!validate (createdProject)) {
-        alert ("Invalid input. Please try again");
-    }
-
-    console.log(createdProject);
-
-});
-
-class SingleProject implements ProjectTemplate {
-    title: string;
-
-    constructor (ttl: string) {
-        this.title = ttl;
-    }
-}
-
-class ProjectList implements ProjectTemplate {
-    title: string;
-
-    constructor (ttl: string) {
-        this.title = ttl;
-    }
-} */
+//Project input class
 class NewProject {
     constructor() {
         this.templateEl = document.getElementById("project-input");
@@ -115,11 +25,49 @@ class NewProject {
         const importedHTMLElement = document.importNode(this.templateEl.content, true);
         this.element = importedHTMLElement.firstElementChild;
         this.element.id = "user-input"; //id is taken from css file
+        this.titleInputEl = this.element.querySelector("#title");
+        this.descrInputEl = this.element.querySelector("#description");
+        this.pplInputEl = this.element.querySelector("#people");
+        this.configure();
         this.attach();
+    }
+    TotalUserInput() {
+        const createdTitle = this.titleInputEl.value;
+        const createdDescr = this.descrInputEl.value;
+        const numberOfPpl = this.pplInputEl.value;
+        if (createdTitle.trim().length === 0 ||
+            createdDescr.trim().length === 0 ||
+            numberOfPpl.trim().length === 0) {
+            alert("Invalid input. Please try again");
+            return;
+        }
+        else {
+            return [createdTitle, createdDescr, +numberOfPpl];
+        }
+    }
+    clearInputs() {
+        this.titleInputEl.value = "";
+        this.descrInputEl.value = "";
+        this.pplInputEl.value = "";
+    }
+    submitHandler(event) {
+        event.preventDefault();
+        const userInput = this.TotalUserInput();
+        if (Array.isArray(userInput)) {
+            const [title, descr, people] = userInput;
+            console.log(title, descr, people);
+            this.clearInputs();
+        }
+    }
+    configure() {
+        this.element.addEventListener("submit", this.submitHandler);
     }
     attach() {
         this.hostEl.insertAdjacentElement("afterbegin", this.element);
     }
     ;
 }
+__decorate([
+    autobind
+], NewProject.prototype, "submitHandler", null);
 const ProjectInput = new NewProject();
