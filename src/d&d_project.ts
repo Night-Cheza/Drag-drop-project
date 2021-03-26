@@ -12,7 +12,7 @@ function autobind (target: any, methodName: string, descriptor: PropertyDescript
     return newDescriptor;
 }
 
-//Input validation
+//Project input validation
 interface Validatable {
     value: string | number;
     required?: boolean;
@@ -51,7 +51,7 @@ class NewProject {
     descrInputEl: HTMLInputElement;
     pplInputEl: HTMLInputElement;
 
-    constructor () {
+    constructor() {
       this.templateEl = document.getElementById("project-input")! as HTMLTemplateElement;
       this.hostEl = document.getElementById("app")! as HTMLDivElement;
 
@@ -67,7 +67,7 @@ class NewProject {
       this.attach();
     }  
 
-    private TotalUserInput (): [string, string, number] | void{
+    private TotalUserInput(): [string, string, number] | void {
         const createdTitle = this.titleInputEl.value;
         const createdDescr = this.descrInputEl.value;
         const numberOfPpl = this.pplInputEl.value;
@@ -107,7 +107,7 @@ class NewProject {
     }
 
     @autobind
-    private submitHandler(event: Event) {
+    private submitHandler (event: Event) {
         event.preventDefault();
         const userInput = this.TotalUserInput();
         if (Array.isArray(userInput)) {
@@ -118,7 +118,7 @@ class NewProject {
     }
     
     private configure () {
-        this.element.addEventListener("submit", this.submitHandler);
+        this.element.addEventListener ("submit", this.submitHandler);
     }
 
     private attach (){
