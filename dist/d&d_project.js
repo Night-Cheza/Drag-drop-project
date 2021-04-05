@@ -44,8 +44,15 @@ class ProjectList {
         this.hostEl = document.getElementById("app");
         const importedHTMLElement = document.importNode(this.templateEl.content, true);
         this.element = importedHTMLElement.firstElementChild;
-        this.element.id = `${this.type}-projects`; //????
+        this.element.id = `${this.type}-projects`; //string interpolation
         this.attach();
+        this.renderContent();
+    }
+    renderContent() {
+        const listId = `${this.type}-project-list`;
+        this.element.querySelector('ul').id = listId;
+        this.element.querySelector('h2').textContent =
+            this.type.toUpperCase() + ' PROJECTS';
     }
     attach() {
         this.hostEl.insertAdjacentElement("beforeend", this.element);
@@ -120,3 +127,5 @@ __decorate([
     autobind
 ], NewProject.prototype, "submitHandler", null);
 const ProjectInput = new NewProject();
+const activeProjectList = new ProjectList("active");
+const finishedProjectList = new ProjectList("finished");

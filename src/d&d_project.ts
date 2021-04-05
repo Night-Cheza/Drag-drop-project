@@ -54,8 +54,17 @@ class ProjectList {
 
         const importedHTMLElement = document.importNode(this.templateEl.content, true);
         this.element = importedHTMLElement.firstElementChild as HTMLElement;
-        this.element.id = `${this.type}-projects`; //???? string interpolation
+        this.element.id = `${this.type}-projects`; //string interpolation
         this.attach();
+        this.renderContent();
+    }
+
+    private renderContent () {
+        const listId = `${this.type}-project-list`;
+        this.element.querySelector('ul')!.id = listId;
+        this.element.querySelector('h2')!.textContent =
+         this.type.toUpperCase()+ ' PROJECTS';
+        
     }
 
     private attach() {
@@ -150,3 +159,5 @@ class NewProject {
 }
 
 const ProjectInput = new NewProject ();
+const activeProjectList = new ProjectList("active");
+const finishedProjectList = new ProjectList("finished");
