@@ -42,6 +42,29 @@ function validate(validInput: Validatable) {
     return isValid;
 }
 
+//ProjectList Class
+class ProjectList {
+    templateEl: HTMLTemplateElement;
+    hostEl: HTMLDivElement;
+    element: HTMLElement;
+
+    constructor(private type: "active" | "finished") {
+        this.templateEl = document.getElementById("project-list")! as HTMLTemplateElement;
+        this.hostEl = document.getElementById("app")! as HTMLDivElement;
+
+        const importedHTMLElement = document.importNode(this.templateEl.content, true);
+        this.element = importedHTMLElement.firstElementChild as HTMLElement;
+        this.element.id = `${this.type}-projects`; //???? string interpolation
+        this.attach();
+    }
+
+    private attach() {
+        this.hostEl.insertAdjacentElement ("beforeend", this.element);
+    }
+}
+
+
+
 //Project input class
 class NewProject {
     templateEl: HTMLTemplateElement;
@@ -52,19 +75,19 @@ class NewProject {
     pplInputEl: HTMLInputElement;
 
     constructor() {
-      this.templateEl = document.getElementById("project-input")! as HTMLTemplateElement;
-      this.hostEl = document.getElementById("app")! as HTMLDivElement;
+        this.templateEl = document.getElementById("project-input")! as HTMLTemplateElement;
+        this.hostEl = document.getElementById("app")! as HTMLDivElement;
 
-      const importedHTMLElement = document.importNode(this.templateEl.content, true);
-      this.element = importedHTMLElement.firstElementChild as HTMLFormElement;
-      this.element.id = "user-input"; //id is taken from css file
+        const importedHTMLElement = document.importNode(this.templateEl.content, true);
+        this.element = importedHTMLElement.firstElementChild as HTMLFormElement;
+        this.element.id = "user-input"; //id is taken from css file
 
-      this.titleInputEl = this.element.querySelector("#title") as HTMLInputElement;
-      this.descrInputEl = this.element.querySelector("#description") as HTMLInputElement;
-      this.pplInputEl = this.element.querySelector("#people") as HTMLInputElement;
+        this.titleInputEl = this.element.querySelector("#title") as HTMLInputElement;
+        this.descrInputEl = this.element.querySelector("#description") as HTMLInputElement;
+        this.pplInputEl = this.element.querySelector("#people") as HTMLInputElement;
 
-      this.configure();
-      this.attach();
+        this.configure();
+        this.attach();
     }  
 
     private TotalUserInput(): [string, string, number] | void {

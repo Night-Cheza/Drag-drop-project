@@ -36,6 +36,21 @@ function validate(validInput) {
     }
     return isValid;
 }
+//ProjectList Class
+class ProjectList {
+    constructor(type) {
+        this.type = type;
+        this.templateEl = document.getElementById("project-list");
+        this.hostEl = document.getElementById("app");
+        const importedHTMLElement = document.importNode(this.templateEl.content, true);
+        this.element = importedHTMLElement.firstElementChild;
+        this.element.id = `${this.type}-projects`; //????
+        this.attach();
+    }
+    attach() {
+        this.hostEl.insertAdjacentElement("beforeend", this.element);
+    }
+}
 //Project input class
 class NewProject {
     constructor() {
