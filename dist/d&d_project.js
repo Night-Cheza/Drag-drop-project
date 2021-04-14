@@ -6,9 +6,22 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-class ProjecManeger {
+class ProjectManager {
     constructor() {
+        this.listeners = [];
         this.projects = [];
+    }
+    static getInstance() {
+        if (this.instance) {
+            return this.instance;
+        }
+        else {
+            this.instance = new ProjectManager();
+            return this.instance;
+        }
+    }
+    addListener(listenerFn) {
+        this.listeners.push(listenerFn);
     }
     addProject(title, description, numOfPeople) {
         const newProject = {
@@ -18,8 +31,12 @@ class ProjecManeger {
             people: numOfPeople
         };
         this.projects.push(newProject);
+        for (const listenerFn of this.listeners) {
+            listenerFn(this.projects.slice()); //create a brend new copy of a project that then we manipulate with
+        }
     }
 }
+const projectManager = ProjectManager.getInstance(); // creating global const we can use anywhere
 //autobind decorator
 function autobind(target, methodName, descriptor) {
     const originalMethod = descriptor.value;
@@ -126,6 +143,7 @@ class NewProject {
         const userInput = this.TotalUserInput();
         if (Array.isArray(userInput)) {
             const [title, descr, people] = userInput;
+            projectManager.addProject(title, descr, people);
             console.log(title, descr, people);
             this.clearInputs();
         }

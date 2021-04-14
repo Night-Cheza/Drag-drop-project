@@ -1,7 +1,24 @@
 //Project state managment
 
-class ProjecManeger {
+class ProjectManager {
+    private listeners: any[] = [];
     private projects: any[] = [];
+    private static instance: ProjectManager;
+
+    private constructor() {}
+
+    static getInstance() {
+        if (this.instance) {
+            return this.instance;
+        } else {
+            this.instance = new ProjectManager();
+            return this.instance;
+        }
+    }
+
+    addListener(listenerFn: Function) {
+        this.listeners.push(listenerFn);
+    }
 
     addProject(title: string, description: string, numOfPeople: number) {
         const newProject = {
@@ -11,8 +28,13 @@ class ProjecManeger {
             people: numOfPeople
         };
         this.projects.push(newProject);
+        for (const listenerFn of this.listeners) {
+            listenerFn(this.projects.slice()); //create a brend new copy of a project that then we manipulate with
+        }
     }
 }
+
+const projectManager = ProjectManager.getInstance(); // creating global const we can use anywhere
 
 
 //autobind decorator
@@ -160,6 +182,7 @@ class NewProject {
         const userInput = this.TotalUserInput();
         if (Array.isArray(userInput)) {
             const [title, descr, people] = userInput;
+            projectManager.addProject(title, descr, people);
             console.log(title, descr, people);
             this.clearInputs();
         }
