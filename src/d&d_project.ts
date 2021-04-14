@@ -1,3 +1,19 @@
+//Project state managment
+
+class ProjecManeger {
+    private projects: any[] = [];
+
+    addProject(title: string, description: string, numOfPeople: number) {
+        const newProject = {
+            id: Math.random().toString(), //generate random id for each project
+            title: title,
+            description: description,
+            people: numOfPeople
+        };
+        this.projects.push(newProject);
+    }
+}
+
 
 //autobind decorator
 function autobind (target: any, methodName: string, descriptor: PropertyDescriptor) {
@@ -153,7 +169,7 @@ class NewProject {
         this.element.addEventListener ("submit", this.submitHandler);
     }
 
-    private attach (){
+    private attach () {
       this.hostEl.insertAdjacentElement ("afterbegin", this.element);
     };
 }
