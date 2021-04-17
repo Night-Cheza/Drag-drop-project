@@ -74,11 +74,24 @@ class ProjectList {
         this.type = type;
         this.templateEl = document.getElementById("project-list");
         this.hostEl = document.getElementById("app");
+        this.assignedProjects = [];
         const importedHTMLElement = document.importNode(this.templateEl.content, true);
         this.element = importedHTMLElement.firstElementChild;
         this.element.id = `${this.type}-projects`; //string interpolation
+        projectManager.addListener((projects) => {
+            this.assignedProjects = projects;
+            this.renderProjects();
+        });
         this.attach();
         this.renderContent();
+    }
+    renderProjects() {
+        const listEl = document.getElementById(`${this.type}-project-list`);
+        for (const projItem of this.assignedProjects) {
+            const listItem = document.createElement("li");
+            listItem.textContent = projItem.title;
+            listEl.appendChild(listItem);
+        }
     }
     renderContent() {
         const listId = `${this.type}-project-list`;
