@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 class ProjectManager {
     constructor() {
-        this.listeners = [];
+        this.listeners = []; //idea of function references
         this.projects = [];
     }
     static getInstance() {
@@ -31,7 +31,7 @@ class ProjectManager {
             people: numOfPeople
         };
         this.projects.push(newProject);
-        for (const listenerFn of this.listeners) {
+        for (const listenerFn of this.listeners) { //loop through all listeners functions
             listenerFn(this.projects.slice()); //create a brend new copy of a project that then we manipulate with
         }
     }
@@ -143,7 +143,7 @@ class NewProject {
         const userInput = this.TotalUserInput();
         if (Array.isArray(userInput)) {
             const [title, descr, people] = userInput;
-            projectManager.addProject(title, descr, people);
+            projectManager.addProject(title, descr, people); //creating a new project
             console.log(title, descr, people);
             this.clearInputs();
         }

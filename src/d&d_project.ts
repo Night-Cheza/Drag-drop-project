@@ -1,7 +1,7 @@
 //Project state managment
 
 class ProjectManager {
-    private listeners: any[] = [];
+    private listeners: any[] = []; //idea of function references
     private projects: any[] = [];
     private static instance: ProjectManager;
 
@@ -28,7 +28,7 @@ class ProjectManager {
             people: numOfPeople
         };
         this.projects.push(newProject);
-        for (const listenerFn of this.listeners) {
+        for (const listenerFn of this.listeners) { //loop through all listeners functions
             listenerFn(this.projects.slice()); //create a brend new copy of a project that then we manipulate with
         }
     }
@@ -85,6 +85,7 @@ class ProjectList {
     templateEl: HTMLTemplateElement;
     hostEl: HTMLDivElement;
     element: HTMLElement;
+    assignedProjects: any[];
 
     constructor(private type: "active" | "finished") {
         this.templateEl = document.getElementById("project-list")! as HTMLTemplateElement;
@@ -93,8 +94,18 @@ class ProjectList {
         const importedHTMLElement = document.importNode(this.templateEl.content, true);
         this.element = importedHTMLElement.firstElementChild as HTMLElement;
         this.element.id = `${this.type}-projects`; //string interpolation
+        
+        projectManager.addListener((projects: any[]) => {
+            this.assignedProjects = projects;
+            this.renderProjects();
+        });
+        
         this.attach();
         this.renderContent();
+    }
+
+    private renderProjects () {
+        
     }
 
     private renderContent () {
@@ -182,7 +193,7 @@ class NewProject {
         const userInput = this.TotalUserInput();
         if (Array.isArray(userInput)) {
             const [title, descr, people] = userInput;
-            projectManager.addProject(title, descr, people);
+            projectManager.addProject(title, descr, people); //creating a new project
             console.log(title, descr, people);
             this.clearInputs();
         }
