@@ -88,12 +88,12 @@ class ProjectList {
     assignedProjects: any[];
 
     constructor(private type: "active" | "finished") {
-        this.templateEl = document.getElementById("project-list")! as HTMLTemplateElement;
+        this.templateEl = <HTMLTemplateElement> document.getElementById("project-list")!;
         this.hostEl = document.getElementById("app")! as HTMLDivElement;
         this.assignedProjects = [];
 
         const importedHTMLElement = document.importNode(this.templateEl.content, true);
-        this.element = importedHTMLElement.firstElementChild as HTMLElement;
+        this.element = <HTMLElement> importedHTMLElement.firstElementChild;
         this.element.id = `${this.type}-projects`; //string interpolation
         
         projectManager.addListener((projects: any[]) => {
@@ -139,8 +139,8 @@ class NewProject {
     pplInputEl: HTMLInputElement;
 
     constructor() {
-        this.templateEl = document.getElementById("project-input")! as HTMLTemplateElement;
-        this.hostEl = document.getElementById("app")! as HTMLDivElement;
+        this.templateEl = <HTMLTemplateElement> document.getElementById("project-input")!;
+        this.hostEl = <HTMLDivElement> document.getElementById("app")!;
 
         const importedHTMLElement = document.importNode(this.templateEl.content, true);
         this.element = importedHTMLElement.firstElementChild as HTMLFormElement;
