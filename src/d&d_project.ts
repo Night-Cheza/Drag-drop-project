@@ -1,8 +1,21 @@
+//Project Sample
+enum ProjectStatus {Active, Finished}
+
+class Project {
+    constructor(
+        public id: string,
+        public title: string,
+        public description: string,
+        public people: number,
+        public status: ProjectStatus) {}
+}
+
 //Project state managment
+type Listener = (items: Project[]) => void; //don't need listener to return anything, but need to fire when items are passed
 
 class ProjectManager {
-    private listeners: any[] = []; //idea of function references
-    private projects: any[] = [];
+    private listeners: Listener[] = []; //idea of function references
+    private projects: Project[] = [];
     private static instance: ProjectManager;
 
     private constructor() {}
@@ -16,17 +29,18 @@ class ProjectManager {
         }
     }
 
-    addListener(listenerFn: Function) {
+    addListener(listenerFn: Listener) {
         this.listeners.push(listenerFn);
     }
 
     addProject(title: string, description: string, numOfPeople: number) {
-        const newProject = {
-            id: Math.random().toString(), //generate random id for each project
-            title: title,
-            description: description,
-            people: numOfPeople
-        };
+        const newProject = new Project(
+            Math.random().toString(),
+            title,
+            description,
+            numOfPeople,
+            ProjectStatus.Active); //new created project by default is active
+           
         this.projects.push(newProject);
         for (const listenerFn of this.listeners) { //loop through all listeners functions
             listenerFn(this.projects.slice()); //create a brend new copy of a project that then we manipulate with
@@ -85,18 +99,18 @@ class ProjectList {
     templateEl: HTMLTemplateElement;
     hostEl: HTMLDivElement;
     element: HTMLElement;
-    assignedProjects: any[];
+    assignedProjects: Project[];
 
     constructor(private type: "active" | "finished") {
         this.templateEl = <HTMLTemplateElement> document.getElementById("project-list")!;
-        this.hostEl = document.getElementById("app")! as HTMLDivElement;
+        this.hostEl = <HTMLDivElement> document.getElementById("app")!;
         this.assignedProjects = [];
 
         const importedHTMLElement = document.importNode(this.templateEl.content, true);
         this.element = <HTMLElement> importedHTMLElement.firstElementChild;
         this.element.id = `${this.type}-projects`; //string interpolation
         
-        projectManager.addListener((projects: any[]) => {
+        projectManager.addListener((projects: Project[]) => {
             this.assignedProjects = projects;
             this.renderProjects();
         });
@@ -143,12 +157,12 @@ class NewProject {
         this.hostEl = <HTMLDivElement> document.getElementById("app")!;
 
         const importedHTMLElement = document.importNode(this.templateEl.content, true);
-        this.element = importedHTMLElement.firstElementChild as HTMLFormElement;
+        this.element = <HTMLFormElement> importedHTMLElement.firstElementChild;
         this.element.id = "user-input"; //id is taken from css file
 
-        this.titleInputEl = this.element.querySelector("#title") as HTMLInputElement;
-        this.descrInputEl = this.element.querySelector("#description") as HTMLInputElement;
-        this.pplInputEl = this.element.querySelector("#people") as HTMLInputElement;
+        this.titleInputEl = <HTMLInputElement> this.element.querySelector("#title");
+        this.descrInputEl = <HTMLInputElement> this.element.querySelector("#description");
+        this.pplInputEl = <HTMLInputElement> this.element.querySelector("#people");
 
         this.configure();
         this.attach();
