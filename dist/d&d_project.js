@@ -46,7 +46,7 @@ class ProjectManager {
     }
 }
 const projectManager = ProjectManager.getInstance(); // creating global const we can use anywhere
-//autobind decorator
+//Autobind decorator
 function autobind(target, methodName, descriptor) {
     const originalMethod = descriptor.value;
     const newDescriptor = {
@@ -77,16 +77,32 @@ function validate(validInput) {
     }
     return isValid;
 }
-//ProjectList Class
-class ProjectList {
-    constructor(type) {
-        this.type = type;
-        this.templateEl = document.getElementById("project-list");
-        this.hostEl = document.getElementById("app");
-        this.assignedProjects = [];
+//General Component Class
+class Component {
+    constructor(templateID, hostElementId, insertAtBeginning, newElementID) {
+        this.templateEl = document.getElementById(templateID);
+        this.hostEl = document.getElementById(hostElementId);
         const importedHTMLElement = document.importNode(this.templateEl.content, true);
         this.element = importedHTMLElement.firstElementChild;
-        this.element.id = `${this.type}-projects`; //string interpolation
+        if (newElementID) {
+            this.element.id = newElementID;
+        }
+        this.attach(insertAtBeginning);
+    }
+    attach(insetrAtStart) {
+        this.hostEl.insertAdjacentElement(insetrAtStart ? "afterbegin" : "beforeend", this.element);
+    }
+}
+//ProjectList Class
+class ProjectList extends Component {
+    constructor(type) {
+        super("project-list", "app", false, `${type}-projects`);
+        this.type = type;
+        this.assignedProjects = [];
+        this.configure();
+        this.renderContent();
+    }
+    configure() {
         projectManager.addListener((projects) => {
             const actualProjects = projects.filter(proj => {
                 if (this.type === "active") {
@@ -97,8 +113,12 @@ class ProjectList {
             this.assignedProjects = actualProjects;
             this.renderProjects();
         });
-        this.attach();
-        this.renderContent();
+    }
+    renderContent() {
+        const listId = `${this.type}-project-list`;
+        this.element.querySelector('ul').id = listId;
+        this.element.querySelector('h2').textContent =
+            this.type.toUpperCase() + ' PROJECTS';
     }
     renderProjects() {
         const listEl = document.getElementById(`${this.type}-project-list`);
@@ -109,29 +129,20 @@ class ProjectList {
             listEl.appendChild(listItem);
         }
     }
-    renderContent() {
-        const listId = `${this.type}-project-list`;
-        this.element.querySelector('ul').id = listId;
-        this.element.querySelector('h2').textContent =
-            this.type.toUpperCase() + ' PROJECTS';
-    }
-    attach() {
-        this.hostEl.insertAdjacentElement("beforeend", this.element);
-    }
 }
 //Project input class
-class NewProject {
+class NewProject extends Component {
     constructor() {
-        this.templateEl = document.getElementById("project-input");
-        this.hostEl = document.getElementById("app");
-        const importedHTMLElement = document.importNode(this.templateEl.content, true);
-        this.element = importedHTMLElement.firstElementChild;
-        this.element.id = "user-input"; //id is taken from css file
+        super("project-input", "app", true, "user-input");
         this.titleInputEl = this.element.querySelector("#title");
         this.descrInputEl = this.element.querySelector("#description");
         this.pplInputEl = this.element.querySelector("#people");
         this.configure();
-        this.attach();
+    }
+    configure() {
+        this.element.addEventListener("submit", this.submitHandler);
+    }
+    renderContent() {
     }
     TotalUserInput() {
         const createdTitle = this.titleInputEl.value;
@@ -177,13 +188,6 @@ class NewProject {
             this.clearInputs();
         }
     }
-    configure() {
-        this.element.addEventListener("submit", this.submitHandler);
-    }
-    attach() {
-        this.hostEl.insertAdjacentElement("afterbegin", this.element);
-    }
-    ;
 }
 __decorate([
     autobind
