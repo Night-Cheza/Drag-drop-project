@@ -111,7 +111,13 @@ class ProjectList {
         this.element.id = `${this.type}-projects`; //string interpolation
         
         projectManager.addListener((projects: Project[]) => {
-            this.assignedProjects = projects;
+            const actualProjects = projects.filter(proj => {
+                if(this.type === "active") {
+                    return proj.status === ProjectStatus.Active;
+                }
+                return proj.status === ProjectStatus.Finished;
+            });
+            this.assignedProjects = actualProjects;
             this.renderProjects();
         });
         
@@ -121,10 +127,11 @@ class ProjectList {
 
     private renderProjects () {
         const listEl = <HTMLUListElement> document.getElementById(`${this.type}-project-list`)!;
+        listEl.innerHTML = "";
         for (const projItem of this.assignedProjects) {
             const listItem = document.createElement("li");
             listItem.textContent = projItem.title;
-            listEl.appendChild(listItem)
+            listEl.appendChild(listItem);
         }
     }
 
