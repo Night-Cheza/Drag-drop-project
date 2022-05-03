@@ -1,5 +1,19 @@
+//Drag and Drop interfaces
+interface Draggable {
+    dragStartHandler(event: DragEvent): void;
+    dragEndHandler(event: DragEvent): void;
+}
+
+interface DragTarget { //for boxes/containers where from and to where to drag an element
+    dragOverHandler(event: DragEvent): void; //permits the drop into area we want to drop
+    dropHandler(event: DragEvent): void; //handles the drop
+    dragLeaveHandler(event: DragEvent): void; //to revert update if something goes wrong
+}
+
 //Project Sample
-enum ProjectStatus {Active, Finished}
+enum ProjectStatus {
+    Active, Finished
+}
 
 class Project {
     constructor(
@@ -7,18 +21,28 @@ class Project {
         public title: string,
         public description: string,
         public people: number,
-        public status: ProjectStatus) {}
+        public status: ProjectStatus
+    ) {}
 }
 
 //Project state managment
-type Listener = (items: Project[]) => void; //don't need listener to return anything, but need to fire when items are passed
+type Listener<T> = (items: T[]) => void; //don't need listener to return anything, but need to fire when items are passed
 
-class ProjectManager {
-    private listeners: Listener[] = []; //idea of function references
+class State<T> {
+    protected listeners: Listener<T>[] = [];
+
+    addListener(listenerFn: Listener<T>) {
+        this.listeners.push(listenerFn);
+    }
+}
+
+class ProjectManager extends State<Project>{
     private projects: Project[] = [];
     private static instance: ProjectManager;
 
-    private constructor() {}
+    private constructor() {
+        super();
+    }
 
     static getInstance() {
         if (this.instance) {
@@ -27,10 +51,6 @@ class ProjectManager {
             this.instance = new ProjectManager();
             return this.instance;
         }
-    }
-
-    addListener(listenerFn: Listener) {
-        this.listeners.push(listenerFn);
     }
 
     addProject(title: string, description: string, numOfPeople: number) {
@@ -128,7 +148,7 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
 }
 
 //ProjectItem Class
-class ProjectItem extends Component <HTMLUListElement, HTMLLIElement> {
+class ProjectItem extends Component <HTMLUListElement, HTMLLIElement> implements Draggable {
     private project: Project;
 
     get ppl() {
@@ -147,8 +167,17 @@ class ProjectItem extends Component <HTMLUListElement, HTMLLIElement> {
         this.renderContent();
     }
 
-    configure() {
+    @autobind
+    dragStartHandler(event: DragEvent) { 
+     
+    }
 
+    @autobind
+    dragEndHandler(event: DragEvent) {}
+
+    configure() {
+        this.element.addEventListener("dragstart", this.dragStartHandler);
+        this.element.addEventListener("dragend", this.dragEndHandler);
     }
 
     renderContent() {
@@ -159,7 +188,7 @@ class ProjectItem extends Component <HTMLUListElement, HTMLLIElement> {
 }
 
 //ProjectList Class
-class ProjectList extends Component<HTMLDivElement, HTMLElement> {
+class ProjectList extends Component<HTMLDivElement, HTMLElement> implements DragTarget{
     assignedProjects: Project[];
 
     constructor(private type: "active" | "finished") {
@@ -171,7 +200,25 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
         this.renderContent();
     }
 
+    @autobind
+    dragOverHandler(event: DragEvent) {
+        const listEl = this.element.querySelector("ul")!;
+        listEl.classList.add("droppable");
+    }
+    
+    dropHandler(event: DragEvent) {}
+
+    @autobind
+    dragLeaveHandler(event: DragEvent) {
+        const listEl = this.element.querySelector("ul")!;
+        listEl.classList.remove("droppable");
+    }
+
     configure () {
+        this.element.addEventListener("dragover", this.dragOverHandler);
+        this.element.addEventListener("dragleave", this.dragLeaveHandler);
+        this.element.addEventListener("drop", this.dropHandler);
+
         projectManager.addListener((projects: Project[]) => {
             const actualProjects = projects.filter(proj => {
                 if(this.type === "active") {
