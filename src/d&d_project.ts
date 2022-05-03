@@ -62,6 +62,18 @@ class ProjectManager extends State<Project>{
             ProjectStatus.Active); //new created project by default is active
            
         this.projects.push(newProject);
+        this.updateListeners();
+    }
+
+    moveProject(projectId: string, newStatus:ProjectStatus) { //to update project status
+        const project = this.projects.find(proj => proj.id ===projectId);
+        if(project && project.status !== newStatus) {
+            project.status = newStatus;
+            this.updateListeners();
+        }
+    }
+
+    private updateListeners() { //when project status is changed on drag and drop
         for (const listenerFn of this.listeners) { //loop through all listeners functions
             listenerFn(this.projects.slice()); //create a brend new copy of a project that then we manipulate with
         }
@@ -210,8 +222,10 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> implements Drag
         }
     }
     
+    @autobind
     dropHandler(event: DragEvent) {
-        
+        const projId = event.dataTransfer!.getData("text/plain");
+        projectManager.moveProject(projId, this.type === "active" ? ProjectStatus.Active : ProjectStatus.Finished);
     }
 
     @autobind
