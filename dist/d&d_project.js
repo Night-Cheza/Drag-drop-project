@@ -1,6 +1,7 @@
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    // @ts-ignore
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
@@ -9,7 +10,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var ProjectStatus;
 (function (ProjectStatus) {
     ProjectStatus[ProjectStatus["Active"] = 0] = "Active";
-    ProjectStatus[ProjectStatus["Finished"] = 1] = "Finished";
+    ProjectStatus[ProjectStatus["Completed"] = 1] = "Completed";
 })(ProjectStatus || (ProjectStatus = {}));
 class Project {
     constructor(id, title, description, people, status) {
@@ -97,6 +98,7 @@ class Component {
     constructor(templateID, hostElementId, insertAtBeginning, newElementID) {
         this.templateEl = document.getElementById(templateID);
         this.hostEl = document.getElementById(hostElementId);
+        // @ts-ignore
         const importedHTMLElement = document.importNode(this.templateEl.content, true);
         this.element = importedHTMLElement.firstElementChild;
         if (newElementID) {
@@ -163,7 +165,7 @@ class ProjectList extends Component {
     }
     dropHandler(event) {
         const projId = event.dataTransfer.getData("text/plain");
-        projectManager.moveProject(projId, this.type === "active" ? ProjectStatus.Active : ProjectStatus.Finished);
+        projectManager.moveProject(projId, this.type === "active" ? ProjectStatus.Active : ProjectStatus.Completed);
     }
     dragLeaveHandler(event) {
         const listEl = this.element.querySelector("ul");
@@ -178,7 +180,7 @@ class ProjectList extends Component {
                 if (this.type === "active") {
                     return proj.status === ProjectStatus.Active;
                 }
-                return proj.status === ProjectStatus.Finished;
+                return proj.status === ProjectStatus.Completed;
             });
             this.assignedProjects = actualProjects;
             this.renderProjects();
@@ -274,4 +276,4 @@ __decorate([
 ], NewProject.prototype, "submitHandler", null);
 const ProjectInput = new NewProject();
 const activeProjectList = new ProjectList("active");
-const finishedProjectList = new ProjectList("finished");
+const completedProjectList = new ProjectList("completed");
