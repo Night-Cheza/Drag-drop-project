@@ -12,7 +12,7 @@ interface DragTarget { //for boxes/containers where from and to where to drag an
 
 //Project Sample
 enum ProjectStatus {
-    Active, Finished
+    Active, Completed
 }
 
 class Project {
@@ -204,7 +204,7 @@ class ProjectItem extends Component <HTMLUListElement, HTMLLIElement> implements
 class ProjectList extends Component<HTMLDivElement, HTMLElement> implements DragTarget{
     assignedProjects: Project[];
 
-    constructor(private type: "active" | "finished") {
+    constructor(private type: "active" | "completed") {
         super("project-list", "app", false, `${type}-projects`);
 
         this.assignedProjects = [];
@@ -225,7 +225,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> implements Drag
     @autobind
     dropHandler(event: DragEvent) {
         const projId = event.dataTransfer!.getData("text/plain");
-        projectManager.moveProject(projId, this.type === "active" ? ProjectStatus.Active : ProjectStatus.Finished);
+        projectManager.moveProject(projId, this.type === "active" ? ProjectStatus.Active : ProjectStatus.Completed);
     }
 
     @autobind
@@ -244,7 +244,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> implements Drag
                 if(this.type === "active") {
                     return proj.status === ProjectStatus.Active;
                 }
-                return proj.status === ProjectStatus.Finished;
+                return proj.status === ProjectStatus.Completed;
             });
             this.assignedProjects = actualProjects;
             this.renderProjects();
@@ -350,4 +350,4 @@ class NewProject extends Component<HTMLDivElement, HTMLFormElement>{
 
 const ProjectInput = new NewProject ();
 const activeProjectList = new ProjectList("active");
-const finishedProjectList = new ProjectList("finished");
+const completedProjectList = new ProjectList("completed");
